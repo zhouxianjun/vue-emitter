@@ -1,18 +1,24 @@
-function broadcast (componentName, eventName, params) {
+function broadcast (componentName, eventName, ...args) {
     this.$children.forEach(child => {
         const name = child.$options.name;
 
         if (name === componentName) {
-            child.$emit.apply(child, [eventName].concat(params));
+            child.$emit(eventName, ...args);
         } else {
-            // todo 如果 params 是空数组，接收到的会是 undefined
-            broadcast.apply(child, [componentName, eventName].concat([params]));
+            Reflect.apply(broadcast, child, [componentName, eventName, ...args]);
         }
     });
 }
+function globalEmit (eventName, ...args) {
+    this.$children.forEach(child => {
+        child.$emit(eventName, ...args);
+        Reflect.apply(globalEmit, child, [eventName, ...args]);
+    });
+}
+
 export default {
     methods: {
-        dispatch (componentName, eventName, params) {
+        dispatch (componentName, eventName, ...args) {
             let parent = this.$parent || this.$root;
             let name = parent.$options.name;
 
@@ -24,11 +30,14 @@ export default {
                 }
             }
             if (parent) {
-                parent.$emit.apply(parent, [eventName].concat(params));
+                parent.$emit(eventName, ...args);
             }
         },
-        broadcast (componentName, eventName, params) {
-            broadcast.call(this, componentName, eventName, params);
+        global (event, ...args) {
+            Reflect.apply(globalEmit, this.$root, [event, ...args]);
+        },
+        broadcast (componentName, eventName, ...args) {
+            Reflect.apply(broadcast, this, [componentName, eventName, ...args]);
         }
     }
 };

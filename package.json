@@ -1,6 +1,6 @@
 {
     "name": "vue-emitter",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "vue emitter",
     "main": "dist/vue-emitter.js",
     "scripts": {
@@ -13,6 +13,10 @@
         "vue",
         "emitter"
     ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/zhouxianjun/vue-emitter.git"
+    },
     "author": "Alone",
     "license": "ISC",
     "devDependencies": {

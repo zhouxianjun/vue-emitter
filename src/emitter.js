@@ -18,7 +18,7 @@ function globalEmit (eventName, ...args) {
 
 export default {
     methods: {
-        dispatch (componentName, eventName, ...args) {
+        parent (componentName, eventName, ...args) {
             let parent = this.$parent || this.$root;
             let name = parent.$options.name;
 
@@ -32,6 +32,9 @@ export default {
             if (parent) {
                 parent.$emit(eventName, ...args);
             }
+        },
+        dispatch (componentName, eventName, ...args) {
+            Reflect.apply(broadcast, this.$root, [componentName, eventName, ...args]);
         },
         global (event, ...args) {
             Reflect.apply(globalEmit, this.$root, [event, ...args]);
